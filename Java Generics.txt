@@ -1,0 +1,7 @@
+class Printer {
+    public <T> void printArray(T[] typeArray) {
+        for(T value : typeArray) {
+            System.out.println(value);
+        }
+    }
+}
