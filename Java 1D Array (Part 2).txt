@@ -1,89 +1,50 @@
-import java.io.*;
-import java.math.BigInteger;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Solution {
-    StringTokenizer st;
-    BufferedReader in;
-    PrintWriter out;
 
-    public static void main(String[] args) throws NumberFormatException, IOException {
-        final Solution solver = new Solution();
-        long time = System.currentTimeMillis();
-        solver.open();
-        solver.solve();
-        //System.out.println("Spend time:" + (System.currentTimeMillis() - time));
-        solver.close();
+static int visited[];
+
+public static boolean canWin(int[] game,int leap,int i) {
+    // Return true if you can win the game; otherwise, return false.
+
+     if(i>=game.length)
+               return true;
+
+    if(visited[i]==0)
+    {
+        visited[i]=1;
+        if(game[i]==0)
+        {
+
+           if( canWin(game,leap,i+leap))
+               return true;
+           if( canWin(game,leap,i+1))
+           {
+
+               return true;
+           }
+            if(i!=0)
+                if( canWin(game,leap,i-1))
+                     return true;
+            }
     }
+        return false;
 
-    public void open() throws IOException {
-        in = new BufferedReader(new InputStreamReader(System.in));
-        out = new PrintWriter(new OutputStreamWriter(System.out));
-        //in = new BufferedReader(new FileReader("input.txt"));
-        //out = new PrintWriter(new FileWriter("output.txt"));
-    }
-
-    boolean hasMoreTokens() throws IOException {
-        while (st == null || !st.hasMoreTokens()) {
-            String line = in.readLine();
-            if (line == null)
-                return false;
-            st = new StringTokenizer(line);
+}
+public static void main(String[] args) {
+    Scanner scan = new Scanner(System.in);
+    int q = scan.nextInt();
+    while (q-- > 0) {
+        int n = scan.nextInt();
+        int leap = scan.nextInt();
+        visited=new int[n];
+        int[] game = new int[n];
+        for (int i = 0; i < n; i++) {
+            game[i] = scan.nextInt();
         }
-        return true;
-    }
 
-    public String nextToken() throws IOException {
-        while (st == null || !st.hasMoreTokens()) {
-            String line = in.readLine();
-            if (line == null)
-                return null;
-            st = new StringTokenizer(line);
-        }
-        return st.nextToken();
+        System.out.println( (canWin(game,leap,0)) ? "YES" : "NO" );
     }
-
-    public int nextInt() throws NumberFormatException, IOException {
-        return Integer.parseInt(nextToken());
-    }
-
-    public long nextLong() throws NumberFormatException, IOException {
-        return Long.parseLong(nextToken());
-    }
-
-    public double nextDouble() throws NumberFormatException, IOException {
-        return Double.parseDouble(nextToken());
-    }
-
-    boolean between(final BigInteger n, long from, long to) {
-        return n.compareTo(BigInteger.valueOf(from)) > -1 &&
-                n.compareTo(BigInteger.valueOf(to)) < 1;
-    }
-
-    boolean check(int v, int n, int m, boolean[] field, boolean[] was) {
-        if (v >= n)
-            return true;
-        if (v < 0 || field[v] || was[v])
-            return false;
-        was[v] = true;
-        return check(v - 1, n, m, field, was) ||
-                check(v + 1, n, m, field, was) ||
-                check(v + m, n, m, field, was);
-    }
-
-    public void solve() throws NumberFormatException, IOException {
-        for (int i = nextInt(); i > 0; i--) {
-            final int n = nextInt();
-            final int m = nextInt();
-            final boolean[] arr = new boolean[n];
-            for (int j=0;j<n;j++)
-                arr[j] = nextInt() == 1;
-            out.println(check(0, n, m, arr, new boolean[n]) ? "YES" : "NO");
-        }
-    }
-
-    public void close() {
-        out.flush();
-        out.close();
-    }
+    scan.close();
+}
 }
