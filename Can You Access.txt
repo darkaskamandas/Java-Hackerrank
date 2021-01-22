@@ -1,0 +1,5 @@
+            Inner inner = new Inner();
+            o = inner.new Private();
+            Inner.Private innerPrivate = (Inner.Private) o;
+            String response = innerPrivate.powerof2(num);
+            System.out.println(num + " is " + response);
