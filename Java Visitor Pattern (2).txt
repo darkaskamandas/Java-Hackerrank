@@ -1,0 +1,154 @@
+class SumInLeavesVisitor extends TreeVis {
+    private int sum = 0;
+
+    @Override
+    public int getResult() {
+        return sum;
+    }
+
+    @Override
+    public void visitNode(final TreeNode node) {
+        // no-op
+    }
+
+    @Override
+    public void visitLeaf(final TreeLeaf leaf) {
+        sum += leaf.getValue();
+    }
+}
+
+class ProductOfRedNodesVisitor extends TreeVis {
+    private BigInteger product = BigInteger.ONE;
+    private BigInteger modArg = BigInteger.TEN.pow(9).add(BigInteger.valueOf(7L));
+    private BigInteger prodModArg = BigInteger.TEN.pow(9);
+
+    @Override
+    public int getResult() {
+        return (int) product.mod(modArg).longValue();
+    }
+
+    @Override
+    public void visitNode(TreeNode node) {
+        visit(node);
+    }
+
+    private void visit(Tree node) {
+        if (node.getColor() == Color.RED) {
+            BigInteger value = BigInteger.valueOf(node.getValue());
+            product = product.multiply(value).mod(modArg);
+        }
+    }
+
+    @Override
+    public void visitLeaf(TreeLeaf leaf) {
+        visit(leaf);
+    }
+}
+
+class FancyVisitor extends TreeVis {
+    private int sumEvenNonLeaves = 0;
+    private int sumGreenLeaves = 0;
+
+    @Override
+    public int getResult() {
+        return Math.abs(sumEvenNonLeaves - sumGreenLeaves);
+    }
+
+    @Override
+    public void visitNode(TreeNode node) {
+        if (node.getDepth() % 2 == 0) {
+            sumEvenNonLeaves += node.getValue();
+        }
+    }
+
+    @Override
+    public void visitLeaf(TreeLeaf leaf) {
+        if (leaf.getColor() == Color.GREEN) {
+            sumGreenLeaves += leaf.getValue();
+        }
+    }
+}
+
+public class Solution {
+    public static Tree solve() {
+        return solveInjected(new Scanner(System.in));
+    }
+
+    private static Map<Integer, Set<Integer>> nodeEdgeMap;
+    private static Set<Integer> processedIndexes;
+    private static int[] values;
+    private static Color[] colors;
+
+    public static Tree solveInjected(final Scanner scanner) {
+        // line 1: is total number of nodes
+        final int numNodes = scanner.nextInt();
+        scanner.nextLine();
+
+        // line 2: space-separated node values
+        values = new int[numNodes];
+        for(int i = 0; i < numNodes; ++i) {
+            values[i] = scanner.nextInt();
+        }
+
+        // line 3: space separated node colors, 0=Red 1=Green
+        colors = new Color[numNodes];
+        for(int i = 0; i < numNodes; ++i) {
+            final int c = scanner.nextInt();
+            Color color = Color.RED;
+            if (c == 1) color = Color.GREEN;
+
+            colors[i] = color;
+        }
+
+        scanner.nextLine();// to move past end of the colors line
+
+        // lines 4+: edges by index
+        nodeEdgeMap = new HashMap<>();
+
+        while(scanner.hasNextInt()) {
+            final int a = scanner.nextInt();
+            final int b = scanner.nextInt();
+
+            Set<Integer> aSet;
+            if (nodeEdgeMap.containsKey(a)) {
+                aSet = nodeEdgeMap.get(a);
+            } else {
+                aSet = new HashSet<>();
+                nodeEdgeMap.put(a, aSet);
+            }
+
+            Set<Integer> bSet;
+            if (nodeEdgeMap.containsKey(b)) {
+                bSet = nodeEdgeMap.get(b);
+            } else {
+                bSet = new HashSet<>();
+                nodeEdgeMap.put(b, bSet);
+            }
+
+            aSet.add(b);
+            bSet.add(a);
+        }
+
+        processedIndexes = new HashSet<>();
+
+        return buildNode(1, 0);
+    }
+
+    private static Tree buildNode(final int index, final int level) {
+        final int i = index - 1;// array indexes are 0-based
+
+        Set<Integer> childrenNodes = nodeEdgeMap.remove(index);
+        processedIndexes.add(index);
+        childrenNodes.removeAll(processedIndexes);
+
+        if (childrenNodes.isEmpty()) {
+            return new TreeLeaf(values[i], colors[i], level);
+        } else {
+            TreeNode node = new TreeNode(values[i], colors[i], level);
+            for(int nodeIndex : childrenNodes) {
+                node.addChild(buildNode(nodeIndex, level + 1));
+            };
+            return node;
+        }
+    }
+  
