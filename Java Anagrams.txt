@@ -1,50 +1,24 @@
 import java.io.*;
 import java.util.*;
+
 public class Solution {
 
-   static boolean isAnagram(String A1, String B1) {
-      //Complete the function
-      A1 = A1.toLowerCase();
-      char[] A = A1.toCharArray();
-      B1 = B1.toLowerCase();
-      char[] B = B1.toCharArray();
-      boolean isSame = false;
-      Map<Character,Integer> map1 = new HashMap<Character,Integer>();
-      Map<Character,Integer> map2 = new HashMap<Character,Integer>();
-      for(char c:A){
-          Character c1 = new Character(c);
-          if(map1.containsKey(c1))
-              continue;
-          map1.put(c1,new Integer(0));
-      }
-      for(char c:A){
-           Character c1 = new Character(c);
-           map1.put(c1,new Integer(map1.get(c1)+1));
-      }
-      for(char c:B){
-          Character c1 = new Character(c);
-          if(map2.containsKey(c1))
-              continue;
-          map2.put(c1,new Integer(0));
-      }
-      for(char c:B){
-           Character c1 = new Character(c);
-           map2.put(c1,new Integer(map2.get(c1)+1));
-      }
-      for(char c:A){
-          Character c1 = new Character(c);
-          if(map1.containsKey(c1) && map2.containsKey(c1)){
-              if(map1.get(c1).equals(map2.get(c1))){
-                  isSame = true;
-              }
-              else{
-                  isSame = false;
-                  break;
-              }
-          }
-      }
-      return isSame;
-   }
+   static boolean isAnagram(String A, String B) {
+      
+       char[] arrA = A.toUpperCase().toCharArray();
+       char[] arrB = B.toUpperCase().toCharArray();
+       Arrays.sort(arrA);
+       Arrays.sort(arrB);
+       
+       for(int i = 0; i < A.length(); i++)
+           try {
+               if(Character.toUpperCase(arrA[i]) != Character.toUpperCase(arrB[i])) return false;
+           } // end try
+           catch(Exception e) {
+               return false;
+           } // end catch
+       return true;
+   } // end isAnagram
     public static void main(String[] args) {
         
         Scanner sc=new Scanner(System.in);
@@ -54,5 +28,5 @@ public class Solution {
         if(ret)System.out.println("Anagrams");
         else System.out.println("Not Anagrams");
         
-    }
-}
+    } // end main
+} // end class
