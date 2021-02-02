@@ -1,34 +1,44 @@
-import java.io.;
-import java.util.;
-import java.text.;
-import java.math.;
-import java.util.regex.;
+import java.io.*;
+import java.util.*;
 
 public class Solution {
+
+    static Stack<Character> stack;
+    
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            int i = 0;
-            StackCharacter stack = new Stack();
-            boolean done = true;
-            while (i  line.length()) {
-                char c = line.charAt(i);
-                if (c == '('  c == '['  c == '{') {
-                    stack.push(c);
-                } else if (!stack.isEmpty()){
-                    char c2 = stack.pop();
-                    if ((c == ')' && c2 != '(')  (c == ']' && c2 != '[')  (c == '}' && c2 != '{')) {
-                        done = false;
-                        break;
-                    }
-                } else {
-                    done = false;
-                    break;
+        Scanner scan = new Scanner(System.in);
+        
+        while (scan.hasNext()) {
+            stack = new Stack<Character>();
+            System.out.println(balance(scan.nextLine()));
+        }
+    }
+    
+    static boolean balance(String str) {
+        if (str.length() == 0)
+            return true;
+        else {
+            char tmp;
+            for (int x = 0; x < str.length(); x++) {
+                tmp = str.charAt(x);
+                if (tmp == '(' || tmp == '{' || tmp == '[')
+                    stack.push(tmp);
+                if (tmp == ')') {
+                    if (stack.size() == 0 || stack.pop() != '(')
+                        return false;
                 }
-                i++;
+                if (tmp == '}') {
+                    if (stack.size() == 0 || stack.pop() != '{')
+                        return false;
+                }
+                if (tmp == ']') {
+                    if (stack.size() == 0 || stack.pop() != '[')
+                        return false;
+                }
             }
-            System.out.println(done && stack.isEmpty());
+            
+            
+            return stack.size() == 0;
         }
     }
 }
