@@ -1,0 +1,27 @@
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
+
+public class Solution {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        
+        int a, b;
+        
+        try {
+            a = sc.nextInt();
+            b = sc.nextInt();
+            
+            System.out.println(a / b);
+        } // end try
+        catch(InputMismatchException e) {
+            System.out.println("java.util.InputMismatchException");
+        } // end BadInputException
+        catch(Exception e) {
+            System.out.println(e);
+        } // end catch
+    } // end main
+} // end Solution

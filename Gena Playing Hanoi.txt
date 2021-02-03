@@ -1,0 +1,205 @@
+process.stdin.resume();
+process.stdin.setEncoding('ascii');
+
+var input_stdin = "";
+var input_stdin_array = "";
+var input_currentline = 0;
+
+process.stdin.on('data', function (data) {
+    input_stdin += data;
+});
+
+process.stdin.on('end', function () {
+    input_stdin_array = input_stdin.split("\n");
+    main();    
+});
+
+function readLine() {
+    return input_stdin_array[input_currentline++];
+}
+
+/////////////// ignore above this line ////////////////////
+
+function main() {
+    var i;
+    var n = +readLine();
+    var discs = readLine().split(' ').map(Number);
+    var towers = new Array(5);
+    var i;
+    for (i = 1; i <= 4; i++) {
+        towers[i] = [];
+    }
+    discs.unshift(null);
+    for (i = 1; i <= n; i++) {
+        towers[discs[i]].push(i);
+    }
+    for (i = 1; i <= 4; i++) {
+        towers[i].sort(function(a, b) {
+            return b - a;
+        });
+    }
+    console.log(restoreTower(towers, n));
+}
+
+function restoreTower(towers, n) {
+    var i, j, disc, disc2, newState, numOps, len_i, len_j, emptyUsed;
+    var visited = {};
+    var state = copyState(towers);
+    var queue = new Queue();
+    if (state[1].length === n) {
+        return 0;
+    }
+    queue.enqueue(state);
+    visitState(state, visited, 0);
+    while (true) {
+        state = queue.dequeue();
+        numOps = visited[stateKey(state)] + 1;
+        for (i = 1; i <= 4; i++) {
+            len_i = state[i].length;
+            if (len_i > 0) {
+                disc = state[i][len_i - 1];
+                
+                // Optimization to reduce memory use
+                if (i === 1 && disc === n - len_i + 1) {
+                    continue;
+                }
+                
+                emptyUsed = false;
+                for (j = 1; j <= 4; j++) {
+                    len_j = state[j].length;
+                    
+                    // Optimizations to reduce memory use
+                    if (i !== 1 && j !== 1 && len_i === 1 && len_j === 0) {
+                        continue;
+                    }
+                    if (j !== 1 && len_j === 0) {
+                        if (emptyUsed) {
+                            continue;
+                        }
+                        emptyUsed = true;
+                    }
+                    
+                    disc2 = state[j][len_j - 1];
+                    if (j !== i && (!disc2 || disc2 > disc)) {
+                        newState = copyState(state);
+                        newState[i].pop();
+                        newState[j].push(disc);
+                        if (j === 1 && newState[1].length === n) {
+                            return numOps;
+                        }
+                        if (visitState(newState, visited, numOps)) {
+                            queue.enqueue(newState);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+function copyState(state) {
+    var state_i;
+    var cpy = new Array(5);
+    var i, j;
+    for (i = 1; i <= 4; i++) {
+        state_i = state[i];
+        cpy[i] = new Array(state_i.length);
+        for (j = 0; j < state_i.length; j++) {
+            cpy[i][j] = state_i[j];
+        }
+    }
+    return cpy;
+}
+
+function stateKey(state) {
+    var i, j, state_i;
+    var key = '';
+    for (i = 1; i <= 4; i++) {
+        state_i = state[i];
+        for (j = 0; j < state_i.length; j++) {
+            key += state_i[j] - 1;
+        }
+        key += ',';
+    }
+    return key;
+}
+
+function visitState(state, visited, numOps) {
+    var key = stateKey(state);
+    if (visited[key]) {
+        return false;
+    }
+    visited[key] = numOps;
+    return true;
+}
+
+/*
+
+Queue.js
+
+A function to represent a queue
+
+Created by Stephen Morley - http://code.stephenmorley.org/ - and released under
+the terms of the CC0 1.0 Universal legal code:
+
+http://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+*/
+
+/* Creates a new queue. A queue is a first-in-first-out (FIFO) data structure -
+ * items are added to the end of the queue and removed from the front.
+ */
+function Queue(){
+
+  // initialise the queue and offset
+  var queue  = [];
+  var offset = 0;
+
+  // Returns the length of the queue.
+  this.getLength = function(){
+    return (queue.length - offset);
+  }
+
+  // Returns true if the queue is empty, and false otherwise.
+  this.isEmpty = function(){
+    return (queue.length == 0);
+  }
+
+  /* Enqueues the specified item. The parameter is:
+   *
+   * item - the item to enqueue
+   */
+  this.enqueue = function(item){
+    queue.push(item);
+  }
+
+  /* Dequeues an item and returns it. If the queue is empty, the value
+   * 'undefined' is returned.
+   */
+  this.dequeue = function(){
+
+    // if the queue is empty, return immediately
+    if (queue.length == 0) return undefined;
+
+    // store the item at the front of the queue
+    var item = queue[offset];
+    
+    // increment the offset and remove the free space if necessary
+    if (++ offset * 2 >= queue.length){
+      queue  = queue.slice(offset);
+      offset = 0;
+    }
+
+    // return the dequeued item
+    return item;
+
+  }
+
+  /* Returns the item at the front of the queue (without dequeuing it). If the
+   * queue is empty then undefined is returned.
+   */
+  this.peek = function(){
+    return (queue.length > 0 ? queue[offset] : undefined);
+  }
+
+}
