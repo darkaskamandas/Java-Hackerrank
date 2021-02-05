@@ -1,4 +1,4 @@
-
+   // Write your code here
    public performOperation checkEvenOdd() {
        return (n) -> {           
            return (n % 2 == 0) ? 0 : 1;

@@ -7,7 +7,7 @@ public class Main
       while(it.hasNext())
       {
          Object element = it.next();
-         if(element instanceof String && "###".compareTo((String)element)==0)
+         if((element instanceof String) && element.equals("###"))//Hints: use instanceof operator
             break;
       }
       return it;
