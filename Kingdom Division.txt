@@ -1,0 +1,75 @@
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
+
+public class Solution {
+
+
+    public static int[] readIntArray3(Scanner in, int size) {
+        int[] arr = new int[size];
+        for (int i = 0; i < size; i++) {
+            arr[i] = in.nextInt();
+        }
+        return arr;
+    }
+
+
+
+    public static void main(String[] args) throws Exception {
+        Scanner in = new Scanner(System.in);
+        int cases = 1;//in.nextInt();
+        for (int testcase = 0; testcase < cases; testcase++) {
+            int[] arr = readIntArray3(in, 26);
+            kmpproblem(arr);
+        }
+    }
+
+    public static void kmpproblem(int[] arr) {
+        int least = Integer.MAX_VALUE;
+        int leastIndex = -1;
+        int smallestIndex = -1;
+        for (int i = 0; i < 26; i++) {
+            if (arr[i] < least && arr[i] > 0) {
+                least = arr[i];
+                leastIndex = i;
+            }
+            if (smallestIndex == -1 && arr[i] > 0) {
+                smallestIndex = i;
+            }
+        }
+//        System.out.println(leastIndex + ": " + least);
+//        System.out.println(smallestIndex);
+        if (leastIndex == -1)  {
+            System.out.println("");
+            return;
+        }
+        if (smallestIndex != leastIndex) {
+            System.out.print((char)(leastIndex+'a'));
+            arr[leastIndex]--;
+            for (int i = 0; i < 26; i++) {
+                for (int j = 0; j < arr[i]; j++) {
+                    System.out.print((char)(i+'a'));
+                }
+            }
+            return;
+        }
+        System.out.print((char)(leastIndex+'a'));
+        arr[leastIndex]--;
+        for (int i = leastIndex+1; i < 26; i++) {
+            for (int j = 0; j < arr[i]; j++) {
+                if (arr[leastIndex] > 0) {
+                    System.out.print((char)(leastIndex+'a'));
+                    arr[leastIndex]--;
+                }
+                System.out.print((char)(i+'a'));
+            }
+        }
+        while (arr[leastIndex] > 0) {
+            System.out.print((char)(leastIndex+'a'));
+            arr[leastIndex]--;
+        }
+
+    }
+}
