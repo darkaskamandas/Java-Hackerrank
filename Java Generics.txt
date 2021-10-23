@@ -1,7 +1,17 @@
 class Printer {
-    public <T> void printArray(T[] typeArray) {
-        for(T value : typeArray) {
-            System.out.println(value);
-        }
-    }
+
+	public void printArray(Object[] array) {
+		if (array instanceof Integer[]) {
+			Integer[] intArray = (Integer[]) array;
+			for (Integer i : intArray) {
+				System.out.println(i);
+			}
+		} else if (array instanceof String[]) {
+			String[] stringArray = (String[]) array;
+			for (String s : stringArray) {
+				System.out.println(s);
+			}
+		}
+	}
+
 }
